@@ -1,2 +1,10 @@
 test/
 *.7z
+
+__pycache__/
+
+build/
+
+dist/
+
+main.spec
